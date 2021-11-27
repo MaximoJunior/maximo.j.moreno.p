@@ -49,7 +49,7 @@ export const AddUserForm = () => {
         //     supervisorInmediato 
         //   } );
 
-        console.log( "data", { nombre, 
+        console.log( "data to save", { nombre, 
                apellido, 
                genero, 
                cedula, 
@@ -60,7 +60,7 @@ export const AddUserForm = () => {
              } );
 
         // Clean form
-        // reset();
+          reset();
 
 
     }
@@ -68,17 +68,19 @@ export const AddUserForm = () => {
     return (
         <>
             <h1>Agregar Usuario</h1>
+
             <form onSubmit={ handleSubmit }>
+
                 <div className="row mb-3">
-                    <label for="inputNombre" class="col-sm-2 col-form-label">Nombre</label>
+                    <label htmlFor="inputNombre" className="col-sm-2 col-form-label">Nombre</label>
                     <div className="col-sm-10">
-                    <input vale={ nombre } onChange={ handleInputChange } name="nombre" type="text" className="form-control" id="inputNombre"/>
+                    <input value={ nombre } onChange={ handleInputChange } name="nombre" type="text" className="form-control" id="inputNombre"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label for="inputApellido" class="col-sm-2 col-form-label">Apellido</label>
+                    <label htmlFor="inputApellido" className="col-sm-2 col-form-label">Apellido</label>
                     <div className="col-sm-10">
-                    <input vale={ apellido } onChange={ handleInputChange } name="apellido" type="text" className="form-control" id="inputApellido"/>
+                    <input value={ apellido } onChange={ handleInputChange } name="apellido" type="text" className="form-control" id="inputApellido"/>
                     </div>
                 </div>
                 <div className="row mb-3">
@@ -99,42 +101,66 @@ export const AddUserForm = () => {
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label for="inputCedula" class="col-sm-2 col-form-label">Cedula</label>
+                    <label htmlFor="inputCedula" className="col-sm-2 col-form-label">Cedula</label>
                     <div className="col-sm-10">
-                    <input vale={ cedula } onChange={ handleInputChange } name="cedula" type="text" maxLength="13" className="form-control" id="inputCedula"/>
+                    <input value={ maskText( cedula ) } onChange={ handleInputChange  } name="cedula" type="text" maxLength="13" placeholder="000-0000000-0" className="form-control" id="inputCedula"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label for="FechaNacimiento" class="col-sm-2 col-form-label">Cedula</label>
+                    <label htmlFor="FechaNacimiento" className="col-sm-2 col-form-label">Fecha de Nacimiento</label>
                     <div className="col-sm-10">
-                    <input vale={ fechaNacimiento } onChange={ handleInputChange } name="fechaNacimiento" type="date" className="form-control" id="inputFechaNacimiento"/>
+                    <input value={ fechaNacimiento } onChange={ handleInputChange } name="fechaNacimiento" type="date" className="form-control" id="inputFechaNacimiento"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label for="inputDepartamento" className="col-sm-2 col-form-label">Departamento</label>
+                    <label htmlFor="inputDepartamento" className="col-sm-2 col-form-label">Departamento</label>
                     <div className="col-sm-10">
                     <select onChange={ handleInputChange } value={ departamento } name="departamento" id="inputDepartamento" className="form-select">
-                       { departamentos.map( item => (<option value={ item.codigo } key={ item.codigo } >{ item.nombre }</option>))}
+
+                       { 
+                           departamentos.map( item => (<option value={ item.codigo } key={ item.codigo } > { item.nombre } </option>))
+                       }
+
                     </select>
                     
                     </div>
                 </div>
 
                 <div className="row mb-3">
-                    <label for="inputCargo" class="col-sm-2 col-form-label">Cargo</label>
+                    <label htmlFor="inputCargo" className="col-sm-2 col-form-label">Cargo</label>
                     <div className="col-sm-10">
-                    <input vale={ cargo } onChange={ handleInputChange } name="cargo" type="text" className="form-control" id="inputCargo"/>
+                    <input value={ cargo } onChange={ handleInputChange } name="cargo" type="text" className="form-control" id="inputCargo"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label for="inputCargo" class="col-sm-2 col-form-label">Supervisor Inmediato</label>
+                    <label htmlFor="inputCargo" className="col-sm-2 col-form-label">Supervisor Inmediato</label>
                     <div className="col-sm-10">
-                    <input vale={ supervisorInmediato } onChange={ handleInputChange } name="supervisorInmediato" type="text" className="form-control" id="inputCargo"/>
+                    <input value={ supervisorInmediato } onChange={ handleInputChange } name="supervisorInmediato" type="text" className="form-control" id="inputCargo"/>
                     </div>
                 </div>
-                <button type="button" onClick = { () => { reset() } } className="btn btn-primary danger m-5">Reset</button>
-                <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+                <button type="button" onClick = { reset  } className="btn btn-primary bg-danger m-5">Reset</button>
+                <button type="submit" className="btn btn-primary">Agregar Usuario</button>
+
           </form>
         </>
     )
+}
+
+
+
+// mask text  [###-#######-#] 
+const maskText = ( text ) => {
+
+     let newText = text.replace( "-", "" ).split( "" );
+
+     if( newText.length > 3){
+
+        newText.splice(3, 0, '-');
+     }
+
+     if( newText.length >= 12 && newText[11] !== "-" ) {
+        newText.splice( 11, 0, '-');
+     }
+
+     return newText.join("");
 }
