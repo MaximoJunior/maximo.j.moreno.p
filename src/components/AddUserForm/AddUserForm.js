@@ -1,4 +1,5 @@
 import React from 'react';
+import { maskText } from '../../helpers/maskText';
 import { saveUser } from '../../helpers/saveUser';
 import { useForm } from '../../hooks/useForm';
 import './AddUserForm.css';
@@ -148,19 +149,4 @@ export const AddUserForm = () => {
 
 
 
-// mask text  [###-#######-#] 
-const maskText = ( text ) => {
 
-     let newText = text.replace( "-", "" ).split( "" );
-
-     if( newText.length > 3){
-
-        newText.splice(3, 0, '-');
-     }
-
-     if( newText.length >= 12 && newText[11] !== "-" ) {
-        newText.splice( 11, 0, '-');
-     }
-
-     return newText.join("");
-}
