@@ -1,10 +1,10 @@
 
 
-export const saveUser = async (data) => {
+export const saveUser = async (fields) => {
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(fields)
       };
 
       let data = await fetch("https://mmmmmmmm/s", requestOptions);
