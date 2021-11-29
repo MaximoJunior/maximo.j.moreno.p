@@ -41,10 +41,14 @@ export const AddUserForm = () => {
         e.preventDefault();
          
         // Request HTTP
-        const answer = await saveUser( fields );
+        const newFieldsValues = { ...fields };
+        newFieldsValues.birthDate = new Date( ...newFieldsValues.birthDate.split("-"));
+        const answer = await saveUser(  newFieldsValues );
 
         let timeoutId = null;
         if( answer && answer.message === "OK"){
+
+            
 
              alertSuccess.current.classList.add('show-advice');
 
@@ -54,6 +58,8 @@ export const AddUserForm = () => {
              }, 2000 );
 
          }else {
+
+            console.log( answer );
 
              alertDanger.current.classList.add('show-advice');
 
