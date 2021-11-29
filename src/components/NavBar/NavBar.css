@@ -1,0 +1,7 @@
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 203;
+    font-size: 20px;
+    padding: auto 10px;
+}

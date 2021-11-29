@@ -1,7 +1,8 @@
 
 form {
-    padding: 20px 100px;
+    padding: 20px 50px;
     font-size: 20px;
+    position: relative;
 }
 
 form .form-label,
@@ -11,9 +12,25 @@ form .form-control {
 
 h1 {
     text-align: center;
-    padding: 10px 20px;
+    padding: 10px;
+    font-size: 25px;
 }
 
 form button {
     font-size: 20px !important;
+    text-align: center !important;
+    margin: 5px;
+}
+
+.alert-success,
+.alert-danger {
+      position: absolute !important;
+      right: 50px;
+      left: 50px;
+      top: 10px;
+      display: none !important;
+}
+
+.show-advice {
+    display: block !important;
 }

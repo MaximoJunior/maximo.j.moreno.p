@@ -1,5 +1,5 @@
 import React from "react";
-import { AddUserForm } from "./components/AddUserForm/AddUserForm";
+import { AppRouter } from "./routers/AppRouter";
 
 
 const UserApp = () => {
@@ -7,7 +7,7 @@ const UserApp = () => {
 
     return (
         <>
-            <AddUserForm />
+            <AppRouter />
         </>
     )
 }

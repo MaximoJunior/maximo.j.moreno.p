@@ -1,0 +1,13 @@
+.container-list{
+    margin: auto 50px !important;
+    font-size: 24px;
+}
+
+.dpName {
+    font-size: 14px;
+    margin-left: 20px;
+    background-color: gray;
+    color: white;
+    padding: 4px;
+    border-radius: 5px;
+}

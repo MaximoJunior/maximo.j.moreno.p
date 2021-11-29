@@ -1,69 +1,78 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { maskText } from '../../helpers/maskText';
-import { saveUser } from '../../helpers/saveUser';
+import { saveUser } from '../../helpers/userRequestHttp';
+import { useFetchDepartments } from '../../hooks/useFetchDepartments';
 import { useForm } from '../../hooks/useForm';
 import './AddUserForm.css';
 
 export const AddUserForm = () => {
 
     const initialState = { 
-            nombre : "",
-            apellido: "", 
-            genero: "", 
-            cedula: "", 
-            fechaNacimiento: Date.now(), 
-            departamento:"", 
-            cargo: "", 
-            supervisorInmediato:"" 
+            name : "",
+            lastName: "", 
+            gender: "", 
+            number_ID: "", 
+            birthDate: Date.now(), 
+            department:"", 
+            position: "", 
+            supervisor:"" 
         };
 
-
-    // Simulacion de departamentos 
-    const departamentos = [ { nombre: "Departamento 1", codigo: 1 }, { nombre: "Departamento 2", codigo: 5 } ];
-
-    const [ 
-            { nombre, 
-              apellido, 
-              genero, 
-              cedula, 
-              fechaNacimiento,
-              departamento,
-              cargo, 
-              supervisorInmediato 
-            }, 
-            handleInputChange, 
-            reset ] = useForm( initialState );
+    const [ fields , handleInputChange, reset ] = useForm( initialState );
+    const{  
+            name, 
+            lastName, 
+            gender, 
+            number_ID, 
+            birthDate,
+            department,
+            position, 
+            supervisor } = fields;
 
 
+    // Get departments
+    const { data } = useFetchDepartments();
+    const { departments } = data;
 
-    const handleSubmit = (e) =>{
+    const alertSuccess = useRef(null);
+    const alertDanger = useRef(null);
+    
+    const handleSubmit = async(e) =>{
         e.preventDefault();
-        // Hacer solicitud HTTP
+         
+        // Request HTTP
+        const answer = await saveUser( fields );
 
-        // saveUser(  { nombre, 
-        //     apellido, 
-        //     genero, 
-        //     cedula, 
-        //     fechaNacimiento,
-        //     departamento,
-        //     cargo, 
-        //     supervisorInmediato 
-        //   } );
+        let timeoutId = null;
+        if( answer && answer.message === "OK"){
 
-        console.log( "data to save", { nombre, 
-               apellido, 
-               genero, 
-               cedula, 
-               fechaNacimiento,
-               departamento,
-               cargo, 
-               supervisorInmediato 
-             } );
+             alertSuccess.current.classList.add('show-advice');
 
-        // Clean form
-          reset();
+             timeoutId = setTimeout( () => {
+                  alertSuccess.current.classList.remove('show-advice');
+                  clearTimeout( timeoutId );
+             }, 2000 );
 
+         }else {
 
+             alertDanger.current.classList.add('show-advice');
+
+             timeoutId = setTimeout( () => {
+                alertDanger.current.classList.remove('show-advice');
+                clearTimeout( timeoutId );
+             }, 1500 );
+
+         }
+       
+         reset();
+
+    }
+
+    //Prevent to enter letters to cedula field
+    const handleKeyDown = (e) => {
+        if(e.charCode < 48 || e.charCode > 57){
+            e.preventDefault();
+        }
     }
 
     return (
@@ -75,13 +84,13 @@ export const AddUserForm = () => {
                 <div className="row mb-3">
                     <label htmlFor="inputNombre" className="col-sm-2 col-form-label">Nombre</label>
                     <div className="col-sm-10">
-                    <input value={ nombre } onChange={ handleInputChange } name="nombre" type="text" className="form-control" id="inputNombre"/>
+                    <input value={ name } onChange={ handleInputChange } name="name" required type="text" className="form-control" id="inputNombre"/>
                     </div>
                 </div>
-                <div className="row mb-3">
+                <div className="row row-3">
                     <label htmlFor="inputApellido" className="col-sm-2 col-form-label">Apellido</label>
                     <div className="col-sm-10">
-                    <input value={ apellido } onChange={ handleInputChange } name="apellido" type="text" className="form-control" id="inputApellido"/>
+                    <input value={ lastName } onChange={ handleInputChange } name="lastName" type="text" required className="form-control" id="inputApellido"/>
                     </div>
                 </div>
                 <div className="row mb-3">
@@ -89,13 +98,13 @@ export const AddUserForm = () => {
                     <div className="col-sm-10">
                     <div className="form-check">
                     <label className="form-check-label">
-                        <input className="form-check-input" type="radio" name="genero" id="gridRadios1" onChange={ handleInputChange } value="F" checked={ genero === 'F' } />
+                        <input  onChange={ handleInputChange } value="FEMALE" checked={ gender === 'FEMALE' } required className="form-check-input" type="radio" name="gender" id="gridRadios1" />
                            Femenino
                         </label>
                     </div>
                     <div className="form-check">
                     <label className="form-check-label" >
-                        <input className="form-check-input" type="radio" name="genero" id="gridRadios2" onChange={ handleInputChange }  value="M" checked={ genero === 'M' }/>
+                        <input onChange={ handleInputChange }  value="MALE" checked={ gender === 'MALE' } required className="form-check-input" type="radio" name="gender" id="gridRadios2" />
                            Masculino
                         </label>
                     </div>
@@ -104,22 +113,33 @@ export const AddUserForm = () => {
                 <div className="row mb-3">
                     <label htmlFor="inputCedula" className="col-sm-2 col-form-label">Cedula</label>
                     <div className="col-sm-10">
-                    <input value={ maskText( cedula ) } onChange={ handleInputChange  } name="cedula" type="text" maxLength="13" placeholder="000-0000000-0" className="form-control" id="inputCedula"/>
+                    <input 
+                           value={ maskText( number_ID ) } 
+                           onChange={ 
+                               handleInputChange
+                           } 
+                           onKeyPress={ handleKeyDown }
+                           name="number_ID" type="text" 
+                           maxLength="13" 
+                           required
+                           placeholder="000-0000000-0" 
+                           className="form-control" 
+                           id="inputCedula"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label htmlFor="FechaNacimiento" className="col-sm-2 col-form-label">Fecha de Nacimiento</label>
+                    <label htmlFor="birthDate" className="col-sm-2 col-form-label">Fecha de Nacimiento</label>
                     <div className="col-sm-10">
-                    <input value={ fechaNacimiento } onChange={ handleInputChange } name="fechaNacimiento" type="date" className="form-control" id="inputFechaNacimiento"/>
+                    <input value={ birthDate } onChange={ handleInputChange } name="birthDate" type="date" required className="form-control" id="inputbirthDate"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label htmlFor="inputDepartamento" className="col-sm-2 col-form-label">Departamento</label>
+                    <label htmlFor="inputdepartment" className="col-sm-2 col-form-label">department</label>
                     <div className="col-sm-10">
-                    <select onChange={ handleInputChange } value={ departamento } name="departamento" id="inputDepartamento" className="form-select">
-
+                    <select onChange={ handleInputChange } value={ department } name="department" required id="inputdepartment" className="form-select form-control">
+                       <option value="" defaultValue>----</option>
                        { 
-                           departamentos.map( item => (<option value={ item.codigo } key={ item.codigo } > { item.nombre } </option>))
+                         departments.map( item => (<option value={ item.id } key={ item.id }> { item.name } </option>))
                        }
 
                     </select>
@@ -128,19 +148,29 @@ export const AddUserForm = () => {
                 </div>
 
                 <div className="row mb-3">
-                    <label htmlFor="inputCargo" className="col-sm-2 col-form-label">Cargo</label>
+                    <label htmlFor="inputposition" className="col-sm-2 col-form-label">position</label>
                     <div className="col-sm-10">
-                    <input value={ cargo } onChange={ handleInputChange } name="cargo" type="text" className="form-control" id="inputCargo"/>
+                    <input value={ position } onChange={ handleInputChange } name="position" required type="text" className="form-control" id="inputposition"/>
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <label htmlFor="inputCargo" className="col-sm-2 col-form-label">Supervisor Inmediato</label>
+                    <label htmlFor="inputposition" className="col-sm-2 col-form-label">Supervisor Inmediato</label>
                     <div className="col-sm-10">
-                    <input value={ supervisorInmediato } onChange={ handleInputChange } name="supervisorInmediato" type="text" className="form-control" id="inputCargo"/>
+                    <input value={ supervisor } onChange={ handleInputChange } name="supervisor" required type="text" className="form-control" id="inputposition"/>
                     </div>
                 </div>
-                <button type="button" onClick = { reset  } className="btn btn-primary bg-danger m-5">Reset</button>
-                <button type="submit" className="btn btn-primary">Agregar Usuario</button>
+                <div className="row mb-0 p-3">
+                    <button type="button" onClick = { reset  } className="btn btn-primary bg-danger col-3">Reset</button>
+                    <button type="submit" className="btn btn-primary col-8">Agregar Usuario</button>
+                </div>
+               
+                <div className="alert alert-success" ref={ alertSuccess } role="alert">
+                      Usuario Agregado!
+                </div>
+
+                <div className="alert alert-danger" ref={ alertDanger } role="alert">
+                      Error, usuario no agregado.
+                </div>
 
           </form>
         </>
